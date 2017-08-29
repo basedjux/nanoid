@@ -1,3 +1,5 @@
+var masks = [15, 31, 63, 127, 255]
+
 /**
  * Secure random string generator with custom alphabet.
  *
@@ -24,22 +26,22 @@
  * @name format
  */
 module.exports = function (random, alphabet, size) {
-  var step = Math.ceil(310 / alphabet.length * size)
+  var mask = masks.find(function (i) {
+    return i >= alphabet.length - 1
+  })
+  var step = Math.ceil(1.6 * mask * size / alphabet.length)
 
-  var bytes, byte
   var id = ''
-  while (id.length !== size) {
-    bytes = random(step)
-    for (var i = 0; i < bytes.length; i++) {
-      byte = bytes[i]
-      if (byte < alphabet.length) {
+  while (true) {
+    var bytes = random(step)
+    for (var i = 0; i < step; i++) {
+      var byte = bytes[i] & mask
+      if (alphabet[byte]) {
         id += alphabet[byte]
-        if (id.length === size) break
+        if (id.length === size) return id
       }
     }
   }
-
-  return id
 }
 
 /**

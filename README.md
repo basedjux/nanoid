@@ -1,6 +1,6 @@
 # Nano ID
 
-Very small and secure a URL-friendly unique ID generator for JavaScript.
+A tiny, secure URL-friendly unique string ID generator for JavaScript.
 
 ```js
 var nanoid = require('nanoid')
@@ -10,7 +10,8 @@ model.id = nanoid() //=> "Uakgb_J5m9g~0JDMbcJqLJ"
 **Safe.** It uses cryptographically strong random APIs
 and guarantees a proper distribution of symbols.
 
-**Small.** Only 258 bytes (minified and gzipped). No dependencies.
+**Small.** Only 179 bytes (minified and gzipped). No dependencies.
+It uses [Size Limit] to control size.
 
 **Compact.** It uses more symbols than UUID (`A-Za-z0-9_~`)
 and has the same number of unique options in just 22 symbols instead of 36.
@@ -18,6 +19,7 @@ and has the same number of unique options in just 22 symbols instead of 36.
 The generator supports Node.js and [all browsers] starting from IE 11.
 
 [all browsers]: http://caniuse.com/#feat=getrandomvalues
+[Size Limit]:   https://github.com/ai/size-limit
 
 <a href="https://evilmartians.com/?utm_source=nanoid">
   <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg"
@@ -48,12 +50,27 @@ Nano ID uses a [better algorithm] and tests uniformity:
 [Secure random values (in Node.js)]: https://gist.github.com/joepie91/7105003c3b26e65efcea63f3db82dfba
 [better algorithm]: https://github.com/ai/nanoid/blob/master/format.js
 
+## Comparison with UUID
+
+Nano ID is similar to UUID v4 (random-based). It uses the same number
+of random bits in ID, so it has the same collision probability:
+
+> For there to be a one in a billion chance of duplication,
+> 103 trillion version 4 IDs must be generated.
+
+There are only 2 differences between Nano ID and UUID v4:
+
+1. Nano ID uses a bigger alphabet for ID, so the same random bits
+   are packed in just 22 symbols instead of 36.
+2. Nano ID code is 2 times smaller in size than `uuid/v4` package:
+   179 bytes instead of 435.
+
 ## Usage
 
 ### Normal
 
 The main module uses URL-friendly symbols (`A-Za-z0-9_~`) and returns an ID
-with 22 characters (to have the same uniqueness as UUID v4).
+with 22 characters (to have the same collisions probability as UUID v4).
 
 ```js
 var nanoid = require('nanoid')
@@ -62,6 +79,13 @@ model.id = nanoid() //=> "Uakgb_J5m9g~0JDMbcJqLJ"
 
 Symbols `-,.()` are not encoded in URL, but in the end of a link
 they could be identified as a punctuation symbol.
+
+If you want to reduce ID length (and increase collisions probability),
+you can pass length as argument:
+
+```js
+nanoid(10) //=> "IRFa~VaY2b"
+```
 
 ### Custom Alphabet or Length
 
@@ -73,13 +97,7 @@ var generate = require('nanoid/generate')
 model.id = generate('1234567890abcdef', 10) //=> "4f90d13a42"
 ```
 
-If you want to use the same URL-friendly symbols and just change the length,
-you can get default alphabet from the `url` module:
-
-```js
-var url = require('nanoid/url')
-model.id = generate(url, 10) //=> "Uakgb_J5m9"
-```
+Alphabet must contain less than 256 symbols.
 
 ### Custom Random Bytes Generator
 
@@ -100,3 +118,11 @@ format(random, "abcdef", 10) //=> "fbaefaadeb"
 
 `random` callback must accept the array size and return an array
 with random numbers.
+
+If you want to use the same URL-friendly symbols with `format`,
+you can get default alphabet from the `url` module:
+
+```js
+var url = require('nanoid/url')
+format(random, url, 10) //=> "93ce_Ltuub"
+```

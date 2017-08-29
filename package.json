@@ -1,7 +1,7 @@
 {
   "name": "nanoid",
-  "version": "0.1.0",
-  "description": "Very small and secure a URL-friendly unique ID generator",
+  "version": "0.2.0",
+  "description": "A tiny, secure URL-friendly unique string ID generator",
   "keywords": [
     "uuid",
     "random",
@@ -15,8 +15,10 @@
     "./random.js": "./random-browser.js"
   },
   "devDependencies": {
+    "benchmark": "^2.1.4",
+    "chalk": "^2.1.0",
     "docdash": "^0.4.0",
-    "eslint": "^4.4.0",
+    "eslint": "^4.4.1",
     "eslint-config-logux": "^16.0.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-es5": "^1.1.0",
@@ -30,9 +32,12 @@
     "jest": "^20.0.4",
     "jsdoc": "^3.5.4",
     "lint-staged": "^4.0.3",
+    "microtime": "^2.1.6",
     "pre-commit": "^1.2.2",
-    "size-limit": "^0.8.0",
-    "webpack-dev-server": "^2.6.1",
+    "shortid": "^2.2.8",
+    "size-limit": "^0.9.0",
+    "uuid": "^3.1.0",
+    "webpack-dev-server": "^2.7.1",
     "yaspeller-ci": "^0.6.0"
   },
   "scripts": {
@@ -56,7 +61,11 @@
   "size-limit": [
     {
       "path": "index.js",
-      "limit": "260 B"
+      "limit": "179 B"
+    },
+    {
+      "path": "generate.js",
+      "limit": "196 B"
     }
   ],
   "lint-staged": {

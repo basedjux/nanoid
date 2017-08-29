@@ -10,3 +10,33 @@ it('generates URL-friendly IDs', function () {
     }
   }
 })
+
+it('has no collisions', function () {
+  var COUNT = 100 * 1000
+  var used = { }
+  for (var i = 0; i < COUNT; i++) {
+    var id = nanoid()
+    expect(used[id]).not.toBeDefined()
+    used[id] = true
+  }
+})
+
+it('has flat distribution', function () {
+  var COUNT = 100 * 1000
+  var LENGTH = nanoid().length
+
+  var chars = { }
+  for (var i = 0; i < COUNT; i++) {
+    var id = nanoid()
+    for (var j = 0; j < id.length; j++) {
+      var char = id[j]
+      if (!chars[char]) chars[char] = 0
+      chars[char] += 1
+    }
+  }
+
+  for (var k in chars) {
+    var distribution = (chars[k] * url.length) / (COUNT * LENGTH)
+    expect(distribution).toBeCloseTo(1, 1)
+  }
+})
